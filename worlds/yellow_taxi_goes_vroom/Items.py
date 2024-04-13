@@ -18,5 +18,5 @@ item_data_table = {
 }
 
 name_to_id = {
-    ItemName.GEAR: YTGV_BASE_ID + 0
+    item_name: item_data.id for item_name, item_data in item_data_table.items()
 }
