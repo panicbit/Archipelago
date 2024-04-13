@@ -15,6 +15,10 @@ item_data_table = {
         id = YTGV_BASE_ID + 0,
         classification = ItemClassification.progression,
     ),
+    ItemName.GOLDEN_SPRING: YTGVItemData(
+        id = YTGV_BASE_ID + 1,
+        classification = ItemClassification.progression,
+    ),
 }
 
 name_to_id = {

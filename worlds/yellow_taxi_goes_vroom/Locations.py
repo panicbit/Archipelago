@@ -27,7 +27,7 @@ for region_info in region_info_list:
         )
         location_data_table[location_name] = location_data
 
-location_data_table[LocationName.MUSK] = YTGVLocationData(
+location_data_table[LocationName.ALIEN_MOSK] = YTGVLocationData(
     region = RegionName.TOSLA_HQ,
     id = None,
 )

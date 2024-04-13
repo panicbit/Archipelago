@@ -79,11 +79,10 @@ def create_region_data_table(world: YTGVWorld) -> Dict[str, YTGVRegionData]:
                 GYM_GEARS,
                 FECAL_MATTERS,
                 FLUSHED_AWAY,
-                MOON, # accessible after beating Alien Mosk
+                MOON,
                 MOSKS_ROCKET, # accessable after beating Granny
             ],
             rules = {
-                MOON: lambda state: state.has(TO_THE_MOON, world.player),
                 MOSKS_ROCKET: lambda state: state.has(SHE_IS_FINE_NOW, world.player),
                 # TODO: check other regions for conditions (FECAL_MATTERS, etc)
             }
