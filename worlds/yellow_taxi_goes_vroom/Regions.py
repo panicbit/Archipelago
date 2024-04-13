@@ -248,6 +248,7 @@ def create_region_data_table(world: YTGVWorld) -> Dict[str, YTGVRegionData]:
         MOON: YTGVRegionData(
             exits = [
                 GRANNYS_ISLAND,
+                SPACESHIP,
             ],
             rules = {}
         ),
