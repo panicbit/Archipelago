@@ -50,11 +50,11 @@ def create_region_data_table(world: YTGVWorld) -> Dict[str, YTGVRegionData]:
                 ARCADE_PLAZA: lambda state: state.has(GEAR, world.player, 18),
                 PIZZA_TIME: lambda state: state.has(GEAR, world.player, 32),
                 TOSLA_SQUARE: lambda state: state.has(GEAR, world.player, 50),
-                MAURIZIOS_CITY: lambda state: state.has(GEAR, world.player, 65),
-                CRASH_TEST_INDUSTRIES: lambda state: state.has(GEAR, world.player, 80),
-                MORIOS_MIND: lambda state: state.has(GEAR, world.player, 0),
-                OBSERVING: lambda state: state.has(GEAR, world.player, 0),
-                ANTICIPATION: lambda state: state.has(GEAR, world.player, 130),
+                MAURIZIOS_CITY: lambda state: state.has(GEAR, world.player, 65) and state.has(GOLDEN_SPRING),
+                CRASH_TEST_INDUSTRIES: lambda state: state.has(GEAR, world.player, 80) and state.has(GOLDEN_SPRING),
+                MORIOS_MIND: lambda state: state.has(GEAR, world.player, 0) and state.has(GOLDEN_SPRING),
+                OBSERVING: lambda state: state.has(GEAR, world.player, 0) and state.has(GOLDEN_SPRING),
+                ANTICIPATION: lambda state: state.has(GEAR, world.player, 130) and state.has(GOLDEN_SPRING),
             }
         ),
         CRASH_AGAIN: YTGVRegionData(
