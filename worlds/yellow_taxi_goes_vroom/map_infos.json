@@ -1,0 +1,834 @@
+[
+  {
+    "areaName": "MAP_AREA_NAME_GRANNY_ISLAND_BONUS_LAWYER_ROOM",
+    "localAreaName": "Law Firm",
+    "levelId": 0,
+    "levelName": "LEVEL_NAME_GRANNY_ISLAND",
+    "localLevelName": "Granny\u0027s Island",
+    "gearIds": [
+      23
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_GRANNY_ISLAND_LAB",
+    "localAreaName": "Morio\u0027s Lab",
+    "levelId": 0,
+    "levelName": "LEVEL_NAME_GRANNY_ISLAND",
+    "localLevelName": "Granny\u0027s Island",
+    "gearIds": [
+      24,
+      25,
+      16,
+      0,
+      26,
+      19,
+      27
+    ],
+    "bunnyIds": [
+      1,
+      2,
+      0
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_GRANNY_ISLAND_BONUS_CRASH_TEST",
+    "localAreaName": "Crash Again",
+    "levelId": 0,
+    "levelName": "LEVEL_NAME_GRANNY_ISLAND",
+    "localLevelName": "Granny\u0027s Island",
+    "gearIds": [
+      10
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_GRANNY_ISLAND_BONUS_BOMBS",
+    "localAreaName": "Ice-Cream truck",
+    "levelId": 0,
+    "levelName": "LEVEL_NAME_GRANNY_ISLAND",
+    "localLevelName": "Granny\u0027s Island",
+    "gearIds": [
+      21,
+      22
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "LEVEL_NAME_GRANNY_ISLAND",
+    "localAreaName": "Granny\u0027s Island",
+    "levelId": 0,
+    "levelName": "LEVEL_NAME_GRANNY_ISLAND",
+    "localLevelName": "Granny\u0027s Island",
+    "gearIds": [
+      9,
+      17,
+      20,
+      13,
+      5,
+      2,
+      14,
+      6,
+      12,
+      8,
+      11,
+      7,
+      1,
+      15,
+      18,
+      3
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_GRANNY_ISLAND_BONUS_PIZZA",
+    "localAreaName": "Pizza Oven",
+    "levelId": 0,
+    "levelName": "LEVEL_NAME_GRANNY_ISLAND",
+    "localLevelName": "Granny\u0027s Island",
+    "gearIds": [
+      4
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_PIZZA_TIME_OVEN_3",
+    "localAreaName": "900\u00B0",
+    "levelId": 2,
+    "levelName": "LEVEL_NAME_PIZZA_TIME",
+    "localLevelName": "Pizza Time",
+    "gearIds": [
+      11
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "LEVEL_NAME_PIZZA_TIME",
+    "localAreaName": "Pizza Time",
+    "levelId": 2,
+    "levelName": "LEVEL_NAME_PIZZA_TIME",
+    "localLevelName": "Pizza Time",
+    "gearIds": [
+      13,
+      4,
+      12,
+      15,
+      14,
+      7,
+      5,
+      2,
+      8,
+      6,
+      1,
+      0,
+      3
+    ],
+    "bunnyIds": [
+      2,
+      0,
+      1
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_PIZZA_TIME_OVEN_2",
+    "localAreaName": "600\u00B0",
+    "levelId": 2,
+    "levelName": "LEVEL_NAME_PIZZA_TIME",
+    "localLevelName": "Pizza Time",
+    "gearIds": [
+      10
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_PIZZA_TIME_OVEN_1",
+    "localAreaName": "400\u00B0",
+    "levelId": 2,
+    "levelName": "LEVEL_NAME_PIZZA_TIME",
+    "localLevelName": "Pizza Time",
+    "gearIds": [
+      9
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "LEVEL_NAME_BOMBEACH",
+    "localAreaName": "Bombeach",
+    "levelId": 1,
+    "levelName": "LEVEL_NAME_BOMBEACH",
+    "localLevelName": "Bombeach",
+    "gearIds": [
+      12,
+      8,
+      15,
+      5,
+      11,
+      6,
+      1,
+      10,
+      4,
+      9,
+      13,
+      2,
+      7,
+      3,
+      0
+    ],
+    "bunnyIds": [
+      2,
+      0,
+      1
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_BOMBEACH_BONUS_CAVE",
+    "localAreaName": "Cave",
+    "levelId": 1,
+    "levelName": "LEVEL_NAME_BOMBEACH",
+    "localLevelName": "Bombeach",
+    "gearIds": [
+      14
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_TOSLA_OFFICES_INSIDE",
+    "localAreaName": "Tosla Offices",
+    "levelId": 5,
+    "levelName": "LEVEL_NAME_TOSLA_OFFICES",
+    "localLevelName": "Tosla\u0027s Offices",
+    "gearIds": [
+      8,
+      6,
+      7,
+      9,
+      10
+    ],
+    "bunnyIds": [
+      2
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_TOSLA_OFFICES_OUTSIDE",
+    "localAreaName": "Tosla Square",
+    "levelId": 5,
+    "levelName": "LEVEL_NAME_TOSLA_OFFICES",
+    "localLevelName": "Tosla\u0027s Offices",
+    "gearIds": [
+      11,
+      3,
+      2,
+      0,
+      4,
+      1,
+      5
+    ],
+    "bunnyIds": [
+      1,
+      0
+    ]
+  },
+  {
+    "areaName": "LEVEL_NAME_GYM",
+    "localAreaName": "Gym Gears",
+    "levelId": 6,
+    "levelName": "LEVEL_NAME_GYM",
+    "localLevelName": "Gym Gears",
+    "gearIds": [
+      0,
+      2,
+      3,
+      1,
+      4,
+      5
+    ],
+    "bunnyIds": [
+      0,
+      1,
+      2
+    ]
+  },
+  {
+    "areaName": "LEVEL_NAME_POOP_WORLD",
+    "localAreaName": "Fecal Matters",
+    "levelId": 7,
+    "levelName": "LEVEL_NAME_POOP_WORLD",
+    "localLevelName": "Fecal Matters",
+    "gearIds": [
+      0,
+      6,
+      1,
+      4,
+      5,
+      2,
+      8,
+      7,
+      3
+    ],
+    "bunnyIds": [
+      2,
+      0,
+      1
+    ]
+  },
+  {
+    "areaName": "LEVEL_NAME_SEWERS",
+    "localAreaName": "Flushed Away",
+    "levelId": 8,
+    "levelName": "LEVEL_NAME_SEWERS",
+    "localLevelName": "Flushed Away",
+    "gearIds": [
+      2,
+      4,
+      3,
+      6,
+      1,
+      0,
+      5
+    ],
+    "bunnyIds": [
+      2,
+      0,
+      1
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_MAURIZIO_CITY_CAVE",
+    "localAreaName": "Purple Tunnel",
+    "levelId": 9,
+    "levelName": "LEVEL_NAME_CITY",
+    "localLevelName": "Maurizio\u0027s City",
+    "gearIds": [
+      5
+    ],
+    "bunnyIds": [
+      1
+    ]
+  },
+  {
+    "areaName": "LEVEL_NAME_CITY",
+    "localAreaName": "Maurizio\u0027s City",
+    "levelId": 9,
+    "levelName": "LEVEL_NAME_CITY",
+    "localLevelName": "Maurizio\u0027s City",
+    "gearIds": [
+      11,
+      15,
+      13,
+      2,
+      6,
+      3,
+      10,
+      9,
+      7,
+      0,
+      12,
+      1,
+      4,
+      14,
+      17,
+      8,
+      16,
+      18
+    ],
+    "bunnyIds": [
+      0,
+      2
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_CRASH_TEST_INDUSTRIES_PIPE",
+    "localAreaName": "Pipe-Zone",
+    "levelId": 10,
+    "levelName": "LEVEL_NAME_CRASH_TEST_INDUSTRIES",
+    "localLevelName": "Crash Test Industries",
+    "gearIds": [
+      12
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "LEVEL_NAME_CRASH_TEST_INDUSTRIES",
+    "localAreaName": "Crash Test Industries",
+    "levelId": 10,
+    "levelName": "LEVEL_NAME_CRASH_TEST_INDUSTRIES",
+    "localLevelName": "Crash Test Industries",
+    "gearIds": [
+      8,
+      7,
+      9,
+      10,
+      14,
+      1,
+      2,
+      3,
+      11,
+      6,
+      5,
+      0,
+      13,
+      4
+    ],
+    "bunnyIds": [
+      1,
+      2,
+      0
+    ]
+  },
+  {
+    "areaName": "LEVEL_NAME_MORIOS_MIND",
+    "localAreaName": "Morio\u0027s Mind",
+    "levelId": 12,
+    "levelName": "LEVEL_NAME_MORIOS_MIND",
+    "localLevelName": "Morio\u0027s Mind",
+    "gearIds": [
+      11,
+      7,
+      0,
+      6,
+      1,
+      10,
+      5,
+      3,
+      9,
+      2,
+      8,
+      4
+    ],
+    "bunnyIds": [
+      0,
+      2,
+      1
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_MORIO_MIND_DREAM",
+    "localAreaName": "Dreaming",
+    "levelId": 12,
+    "levelName": "LEVEL_NAME_MORIOS_MIND",
+    "localLevelName": "Morio\u0027s Mind",
+    "gearIds": [
+      12
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_RUINED_OBSERVATORY_SECRET_DOOR",
+    "localAreaName": "Rooftops",
+    "levelId": 13,
+    "levelName": "LEVEL_NAME_STARMAN_CASTLE",
+    "localLevelName": "Ruined Observatory",
+    "gearIds": [
+      10,
+      11
+    ],
+    "bunnyIds": [
+      2
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_RUINED_OBSERVATORY_INSIDE",
+    "localAreaName": "The green place",
+    "levelId": 13,
+    "levelName": "LEVEL_NAME_STARMAN_CASTLE",
+    "localLevelName": "Ruined Observatory",
+    "gearIds": [
+      9,
+      8,
+      6,
+      7
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_RUINED_OBSERVATORY_OUTSIDE",
+    "localAreaName": "Observing",
+    "levelId": 13,
+    "levelName": "LEVEL_NAME_STARMAN_CASTLE",
+    "localLevelName": "Ruined Observatory",
+    "gearIds": [
+      1,
+      2,
+      12,
+      0,
+      4,
+      3,
+      5
+    ],
+    "bunnyIds": [
+      0,
+      1
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_TOSLA_HQ_OUTSIDE",
+    "localAreaName": "Anticipation",
+    "levelId": 14,
+    "levelName": "LEVEL_NAME_TOSLA_HQ",
+    "localLevelName": "Tosla HQ",
+    "gearIds": [],
+    "bunnyIds": [
+      0
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_TOSLA_HQ_INSIDE",
+    "localAreaName": "Tosla HQ",
+    "levelId": 14,
+    "levelName": "LEVEL_NAME_TOSLA_HQ",
+    "localLevelName": "Tosla HQ",
+    "gearIds": [
+      10,
+      6,
+      14,
+      15,
+      8,
+      2,
+      16,
+      7,
+      0,
+      9,
+      13,
+      3,
+      12,
+      11,
+      5,
+      4,
+      1
+    ],
+    "bunnyIds": [
+      1,
+      2
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_MOON_SPACESHIP",
+    "localAreaName": "Spaceship",
+    "levelId": 15,
+    "levelName": "LEVEL_NAME_MOON",
+    "localLevelName": "The Moon",
+    "gearIds": [],
+    "bunnyIds": [
+      1
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_MOON_OUTSIDE",
+    "localAreaName": "Moon",
+    "levelId": 15,
+    "levelName": "LEVEL_NAME_MOON",
+    "localLevelName": "The Moon",
+    "gearIds": [
+      1,
+      3,
+      0,
+      4,
+      2,
+      7,
+      5,
+      6
+    ],
+    "bunnyIds": [
+      0,
+      2
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_MOON",
+    "localAreaName": "Far far away",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      29,
+      28
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_TOSLA_HQ",
+    "localAreaName": "Infiltration",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      26,
+      27
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_RUINED_OBSERVATORY",
+    "localAreaName": "Mid air",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      24,
+      25
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_MORIO_MIND",
+    "localAreaName": "Eye surgery",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      22,
+      23
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_CRASH_TEST",
+    "localAreaName": "Conveyor Belts",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      20,
+      21
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_MAURIZIO_CITY",
+    "localAreaName": "Heroic Moves",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      19,
+      18
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_SEWERS",
+    "localAreaName": "Smelly Slimes",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      16,
+      17
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_POOP_WORLD",
+    "localAreaName": "Costipation",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      15,
+      14
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_GYM",
+    "localAreaName": "Podium",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      13,
+      12
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_TOSLA_OFFICES",
+    "localAreaName": "Stealthy",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      10,
+      11
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_PANIK_ARCADE",
+    "localAreaName": "Buttons Smashing",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      9,
+      8
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_PIZZA_TIME",
+    "localAreaName": "Pepperoni",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      6,
+      7
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_BOMBEACH",
+    "localAreaName": "Bomb-it",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      5,
+      4
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_MORIO_HOME",
+    "localAreaName": "Welcoming Climbs",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      2,
+      3
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_LAB",
+    "localAreaName": "Lab Memories",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [
+      0,
+      1
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ROCKET_HUB",
+    "localAreaName": "Mosk\u0027s Rocket",
+    "levelId": 16,
+    "levelName": "LEVEL_NAME_ROCKET",
+    "localLevelName": "Mosk\u0027s Rocket",
+    "gearIds": [],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ARCADE_PANIK_OUTSIDE",
+    "localAreaName": "Arcade Plaza",
+    "levelId": 4,
+    "levelName": "LEVEL_NAME_ARCADE_PANIK",
+    "localLevelName": "Arcade Panik",
+    "gearIds": [],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "LEVEL_NAME_ARCADE_PANIK",
+    "localAreaName": "Arcade Panik",
+    "levelId": 4,
+    "levelName": "LEVEL_NAME_ARCADE_PANIK",
+    "localLevelName": "Arcade Panik",
+    "gearIds": [
+      7,
+      4,
+      1,
+      23,
+      16,
+      14,
+      18,
+      19,
+      13,
+      15,
+      24,
+      3,
+      22,
+      17,
+      6,
+      20,
+      12,
+      8,
+      21,
+      5
+    ],
+    "bunnyIds": [
+      1,
+      2,
+      0
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_ARCADE_PANIK_FLIPPER",
+    "localAreaName": "Flipper",
+    "levelId": 4,
+    "levelName": "LEVEL_NAME_ARCADE_PANIK",
+    "localLevelName": "Arcade Panik",
+    "gearIds": [
+      2,
+      10,
+      9,
+      11,
+      0
+    ],
+    "bunnyIds": []
+  },
+  {
+    "areaName": "MAP_AREA_NAME_MORIO_HOME_INSIDE",
+    "localAreaName": "Morio\u0027s Home",
+    "levelId": 3,
+    "levelName": "LEVEL_NAME_MORIOS_HOME",
+    "localLevelName": "Morio\u0027s Home",
+    "gearIds": [
+      1,
+      13,
+      12,
+      8,
+      7,
+      15,
+      11,
+      3,
+      2
+    ],
+    "bunnyIds": [
+      2
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_MORIO_HOME_OUTSIDE",
+    "localAreaName": "Morio\u0027s Island",
+    "levelId": 3,
+    "levelName": "LEVEL_NAME_MORIOS_HOME",
+    "localLevelName": "Morio\u0027s Home",
+    "gearIds": [
+      14,
+      9,
+      4,
+      10,
+      0
+    ],
+    "bunnyIds": [
+      0,
+      1
+    ]
+  },
+  {
+    "areaName": "MAP_AREA_NAME_MORIO_HOME_SECRET",
+    "localAreaName": "Weird Tunnels",
+    "levelId": 3,
+    "levelName": "LEVEL_NAME_MORIOS_HOME",
+    "localLevelName": "Morio\u0027s Home",
+    "gearIds": [
+      6,
+      5
+    ],
+    "bunnyIds": []
+  }
+]
