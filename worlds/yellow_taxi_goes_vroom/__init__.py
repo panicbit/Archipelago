@@ -112,12 +112,16 @@ class YTGVWorld(World):
         self.multiworld.itempool += bunnies
 
     def create_other_items(self) -> None:
-        other_items = [
-            self.create_item("Golden Spring"),
-            self.create_item("Golden Propeller"),
-        ]
+        golden_spring = self.create_item("Golden Spring")
+        golden_propeller = self.create_item("Golden Propeller")
 
-        self.multiworld.itempool += other_items
+        # TODO: lock golden items until implemented properly
+        self.get_location("Golden Spring").place_locked_item(golden_spring)
+        self.get_location("Golden Propeller").place_locked_item(golden_propeller)
+        # self.multiworld.itempool += [
+        #     golden_spring,
+        #     golden_propeller,
+        # ]
 
     def set_rules(self) -> None:
         YTGVRules(self).set()

@@ -39,10 +39,6 @@ class YTGVRules:
         player = self.world.player
         multiworld = self.world.multiworld
 
-        # TODO: locked until implemented properly
-        self.world.get_location("Golden Spring").place_locked_item("Golden Spring")
-        self.world.get_location("Golden Propeller").place_locked_item("Golden Propeller")
-
         for entrance_name, rule in self.connection_rules.items():
             entrance = multiworld.get_entrance(entrance_name, player)
             entrance.access_rule = rule
