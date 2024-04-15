@@ -1,4 +1,6 @@
 
+let base_id = 'ytgv' | into binary | encode hex | into int --radix 16 # 0x79746776
+
 def main [] {
     let map_infos = open map_infos.json
     let items = $map_infos | create_items | to json --indent 4
@@ -117,6 +119,7 @@ def create_id_by_location [] {
     create_locations
     | enumerate
     | select item index
+    | update index { $in + $base_id }
     | transpose -r --as-record
 }
 
