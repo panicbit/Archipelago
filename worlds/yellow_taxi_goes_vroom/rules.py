@@ -17,6 +17,12 @@ class YTGVRules:
         options = world.options
 
         self.connection_rules = {
+            # Mosk's rocket is only available after beating Granny
+            "Granny's Island -> Moon":
+                lambda state: state.has("She is fine now!", player),
+            "Granny's Island -> Mosk's Rocket":
+                lambda state: state.has("She is fine now!", player),
+            # Portal gear requirements
             "Morio's Lab -> Morio's Island":
                 lambda state: state.has("Gear", player, options.morios_island_required_gears),
             "Morio's Lab -> Bombeach":
