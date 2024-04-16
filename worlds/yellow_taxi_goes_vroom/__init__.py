@@ -102,14 +102,13 @@ class YTGVWorld(World):
         self.total_bunnies = len(BUNNIES) # TODO: create option
         self.required_bunnies = 0 # TODO: create option
 
-        bunnies = [
-            self.create_item("Bunny")
-            for _ in range(self.total_bunnies)
-        ]
-
-        self.created_bunnies = len(bunnies)
-
-        self.multiworld.itempool += bunnies
+        for location_name in BUNNIES:
+            bunny = self.create_item("Bunny")
+            self.created_bunnies += 1
+            # TODO: lock bunnies until implemented properly
+            location = self.get_location(location_name)
+            location.place_locked_item(bunny)
+            # self.multiworld.itempool.append(bunny)
 
     def create_other_items(self) -> None:
         golden_spring = self.create_item("Golden Spring")
