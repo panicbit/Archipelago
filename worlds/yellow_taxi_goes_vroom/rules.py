@@ -42,3 +42,8 @@ class YTGVRules:
         for entrance_name, rule in self.connection_rules.items():
             entrance = multiworld.get_entrance(entrance_name, player)
             entrance.access_rule = rule
+
+        # Set up completion
+        event_she_is_fine_now = self.world.create_item("She is fine now!");
+        multiworld.get_location("Granny", player).place_locked_item(event_she_is_fine_now)
+        multiworld.completion_condition[player] = lambda state: state.has(event_she_is_fine_now.name, player)

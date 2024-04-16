@@ -23,6 +23,12 @@ class YTGVRegion(Region):
         }
 
         self.add_locations(id_by_location, YTGVLocation)
+
+        # Event locations
+        if self.name == "Spaceship":
+            granny = YTGVLocation(world.player, "Granny", None, self)
+            self.locations.append(granny);
+
         self.multiworld.regions.append(self)
 
 class YTGVItem(Item):
