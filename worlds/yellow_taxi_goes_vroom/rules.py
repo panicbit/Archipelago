@@ -75,6 +75,7 @@ class YTGVRules:
 
     def set(self):
         player = self.world.player
+        world = self.world
         multiworld = self.world.multiworld
 
         for entrance_name, rule in self.connection_rules.items():
@@ -82,12 +83,12 @@ class YTGVRules:
             entrance.access_rule = rule
 
         # Place events
-        multiworld.get_location("Bombcar", player).place_locked_item(self.event_bombcar)
-        multiworld.get_location("Doggo", player).place_locked_item(self.event_doggo)
-        multiworld.get_location("Pizza King", player).place_locked_item(self.event_noble_knight)
-        multiworld.get_location("Orange Button", player).place_locked_item(self.event_orange_button)
-        multiworld.get_location("Passkey", player).place_locked_item(self.event_now_i_remember)
-        multiworld.get_location("Granny", player).place_locked_item(self.event_she_is_fine_now)
+        world.get_location("Bombcar").place_locked_item(self.event_bombcar)
+        world.get_location("Doggo").place_locked_item(self.event_doggo)
+        world.get_location("Pizza King").place_locked_item(self.event_noble_knight)
+        world.get_location("Orange Button").place_locked_item(self.event_orange_button)
+        world.get_location("Passkey").place_locked_item(self.event_now_i_remember)
+        world.get_location("Granny").place_locked_item(self.event_she_is_fine_now)
 
         # Set up completion
         multiworld.completion_condition[player] = lambda state: state.has(self.event_she_is_fine_now.name, player)
