@@ -96,6 +96,11 @@ class YTGVWorld(World):
 
         self.created_gears = len(gears)
 
+        # Lock one gear to Morio to prevent unnecessary BK at the start
+        first_gear = gears.pop()
+        morio = self.get_location("Morio's Lab | Gear 1")
+        morio.place_locked_item(first_gear)
+
         self.multiworld.itempool += gears
 
     def create_bunnies(self) -> None:
