@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 class YTGVRules:
     world: YTGVWorld
     connection_rules: Dict[str, CollectionRule]
+    location_rules: Dict[str, CollectionRule]
     event_bombcar: YTGVItem
     event_noble_knight: YTGVItem
     event_orange_button: YTGVItem
@@ -55,22 +56,32 @@ class YTGVRules:
             "Morio's Lab -> Tosla Square":
                 lambda state: state.has("Gear", player, options.tosla_square_required_gears),
             "Morio's Lab -> Maurizio's City":
-                lambda state: state.has("Gear", player, options.maurizios_city_required_gears),
+                lambda state: (
+                    state.has("Gear", player, options.maurizios_city_required_gears) and
+                    state.has("Golden Spring", player)
+                ),
             "Morio's Lab -> Crash Test Industries":
-                lambda state: state.has("Gear", player, options.crash_test_industries_required_gears),
+                lambda state: (
+                    state.has("Gear", player, options.crash_test_industries_required_gears) and
+                    state.has("Golden Spring", player)
+                ),
             "Morio's Lab -> Morio's Mind":
-                lambda state: state.has(self.event_orange_button.name, player),
-            "Morio's Lab -> Observing":
                 lambda state: (
                     state.has(self.event_orange_button.name, player) and
-                    state.has(self.event_now_i_remember.name, player)
+                    state.has("Golden Spring", player)
                 ),
+            "Morio's Lab -> Observing":
+                lambda state: state.has(self.event_now_i_remember.name, player),
             "Morio's Lab -> Anticipation":
                 lambda state: (
-                    state.has(self.event_orange_button.name, player) and
-                    state.has(self.event_now_i_remember.name, player) and
+                    state.has("Golden Propeller", player) and
                     state.has("Gear", player, options.anticipation_required_gears)
                 ),
+        }
+
+        self.location_rules = {
+            "Doggo":
+                lambda state: state.has("Golden Spring", player),
         }
 
     def set(self):
@@ -79,8 +90,12 @@ class YTGVRules:
         multiworld = self.world.multiworld
 
         for entrance_name, rule in self.connection_rules.items():
-            entrance = multiworld.get_entrance(entrance_name, player)
+            entrance = world.get_entrance(entrance_name)
             entrance.access_rule = rule
+
+        for location_name, rule in self.location_rules.items():
+            location = world.get_location(location_name)
+            location.access_rule = rule
 
         # Place events
         world.get_location("Bombcar").place_locked_item(self.event_bombcar)
