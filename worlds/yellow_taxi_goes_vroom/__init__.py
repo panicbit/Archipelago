@@ -1,5 +1,5 @@
 from binascii import hexlify
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from BaseClasses import ItemClassification
 from worlds.AutoWorld import World
@@ -144,3 +144,17 @@ class YTGVWorld(World):
             return ItemClassification.progression
 
         return ItemClassification.filler
+
+    def fill_slot_data(self) -> Dict[str, Any]:
+        return self.options.as_dict(
+            "morios_island_required_gears",
+            "bombeach_required_gears",
+            "arcade_plaza_required_gears",
+            "pizza_time_required_gears",
+            "tosla_square_required_gears",
+            "maurizios_city_required_gears",
+            "crash_test_industries_required_gears",
+            "morios_mind_required_gears",
+            "observing_required_gears",
+            "anticipation_required_gears",
+        )
