@@ -96,10 +96,14 @@ class YTGVWorld(World):
 
         self.created_gears = len(gears)
 
-        # Lock one gear to Morio to prevent unnecessary BK at the start
-        first_gear = gears.pop()
+        # Lock first 3 gears to prevent unnecessary BK at the start
         morio = self.get_location("Morio's Lab | Gear 1")
-        morio.place_locked_item(first_gear)
+        morio.place_locked_item(gears.pop())
+        morio = self.get_location("Morio's Lab | Gear 6")
+        morio.place_locked_item(gears.pop())
+        morio = self.get_location("Morio's Lab | Gear 5")
+        morio.place_locked_item(gears.pop())
+
 
         self.multiworld.itempool += gears
 
