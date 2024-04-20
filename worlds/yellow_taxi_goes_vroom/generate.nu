@@ -127,13 +127,7 @@ def calculate_bunnies [] {
     update bunnyIds { sort }
     | insert bunnies {|area|
         $area.bunnyIds | each {|bunnyId|
-            let levelName = match $area.localAreaName {
-                "Granny's Island" => "Morio's Lab",
-                "Morio's Home" => "Morio's Island",
-                _ => $area.localLevelName
-            }
-            
-            $"($levelName) | Bunny ($bunnyId + 1)"
+            $"($area.localLevelName) | Bunny ($bunnyId + 1)"
         }
     }
 }
@@ -141,22 +135,8 @@ def calculate_bunnies [] {
 def calculate_gears [] {
     update gearIds { sort }
     | insert gears {|area|
-        $area.gearIds | enumerate | each {|gear|
-            if ($area.gearIds | length) > 1 {
-                $"($area.localAreaName) | Gear ($gear.index + 1)"
-            } else {
-                $"($area.localAreaName) | Gear"
-            }
-        }
-    }
-}
-
-def gears_for_map [$map] {
-    $map.gearIds | enumerate | each {|gear|
-        if ($map.gearIds | length) > 1 {
-            $"($map.localAreaName) | Gear ($gear.index + 1)"
-        } else {
-            $"($map.localAreaName) | Gear"
+        $area.gearIds | each {|gearId|
+            $"($area.localLevelName) | Gear ($gearId + 1)"
         }
     }
 }
