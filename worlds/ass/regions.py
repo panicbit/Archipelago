@@ -1,0 +1,3 @@
+WHERE_THE_SUN_DONT_SHINE = "WHERE THE SUN DON'T SHINE"
+UP_YOURS = "up yours"
+THE_REAR_END = "the rear end"
