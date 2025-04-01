@@ -182,7 +182,7 @@ def user_path(*path: str) -> str:
     """Returns either local_path or home_path based on write permissions."""
     if hasattr(user_path, "cached_path"):
         pass
-    elif os.access(local_path(), os.W_OK) and not (is_macos and is_frozen()):
+    elif os.access(local_path(), os.R_OK) and not (is_macos and is_frozen()):
         user_path.cached_path = local_path()
     else:
         user_path.cached_path = home_path()
