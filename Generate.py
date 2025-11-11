@@ -491,10 +491,6 @@ def roll_settings(weights: dict, plando_options: PlandoOptions = PlandoOptions.b
 
     requirements = weights.get("requires", {})
     if requirements:
-        version = requirements.get("version", __version__)
-        if tuplize_version(version) > version_tuple:
-            raise Exception(f"Settings reports required version of generator is at least {version}, "
-                            f"however generator is of version {__version__}")
         required_plando_options = PlandoOptions.from_option_string(requirements.get("plando", ""))
         if required_plando_options not in plando_options:
             if required_plando_options:
