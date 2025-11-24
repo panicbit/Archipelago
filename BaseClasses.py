@@ -1580,9 +1580,15 @@ class ItemClassification(IntFlag):
 
 class Item:
     game: str = "Generic"
-    __slots__ = ("name", "classification", "code", "player", "location")
+    __slots__ = ("name", "_classification", "_advancement", "_skip_in_prog_balancing", "_useful", "_never_exclude", "_trap", "_deprioritized", "code", "player", "location")
     name: str
-    classification: ItemClassification
+    _classification: ItemClassification
+    _advancement: bool
+    _skip_in_prog_balancing: bool
+    _useful: bool
+    _never_exclude: bool
+    _trap: bool
+    _deprioritized: bool
     code: Optional[int]
     """an item with code None is called an Event, and does not get written to multidata"""
     player: int
@@ -1590,10 +1596,30 @@ class Item:
 
     def __init__(self, name: str, classification: ItemClassification, code: Optional[int], player: int):
         self.name = name
-        self.classification = classification
+        self._classification = classification
+        self._advancement = ItemClassification.progression in classification
+        self._skip_in_prog_balancing = ItemClassification.progression_skip_balancing in classification
+        self._useful = ItemClassification.useful in classification
+        self._never_exclude = ItemClassification.useful in classification
+        self._trap = ItemClassification.trap in classification
+        self._deprioritized = ItemClassification.deprioritized in classification
         self.player = player
         self.code = code
         self.location = None
+
+    @property
+    def classification(self) -> ItemClassification:
+        return self._classification
+
+    @classification.setter
+    def classification(self, value: ItemClassification):
+        self._classification = value
+        self._advancement = ItemClassification.progression in value
+        self._skip_in_prog_balancing = ItemClassification.progression_skip_balancing in value
+        self._useful = ItemClassification.useful in value
+        self._never_exclude = ItemClassification.useful in value
+        self._trap = ItemClassification.trap in value
+        self._deprioritized = ItemClassification.deprioritized in value
 
     @property
     def hint_text(self) -> str:
@@ -1605,23 +1631,23 @@ class Item:
 
     @property
     def advancement(self) -> bool:
-        return ItemClassification.progression in self.classification
+        return self._advancement
 
     @property
     def skip_in_prog_balancing(self) -> bool:
-        return ItemClassification.progression_skip_balancing in self.classification
+        return self._skip_in_prog_balancing
 
     @property
     def useful(self) -> bool:
-        return ItemClassification.useful in self.classification
+        return self._useful
 
     @property
     def trap(self) -> bool:
-        return ItemClassification.trap in self.classification
+        return self._trap
 
     @property
     def deprioritized(self) -> bool:
-        return ItemClassification.deprioritized in self.classification
+        return self._deprioritized
 
     @property
     def filler(self) -> bool:
