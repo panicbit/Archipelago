@@ -1,15 +1,12 @@
 import json
-import os
+import pkgutil
 
 def createResourcePackName(amount: int, itemName: str):
     return "Resource Pack: " + str(amount) + " " + itemName
 
-with open(os.path.join(os.path.dirname(__file__), 'items.json'), 'r') as file:
-    item_table = json.loads(file.read())
-with open(os.path.join(os.path.dirname(__file__), 'progressives.json'), 'r') as file:
-    progressive_table = json.loads(file.read())
-with open(os.path.join(os.path.dirname(__file__), 'resourcepacks.json'), 'r') as file:
-    resourcepack_items = json.loads(file.read())
+item_table = json.loads(pkgutil.get_data(__name__, "items.json"))
+progressive_table = json.loads(pkgutil.get_data(__name__, "progressives.json"))
+resourcepack_items = json.loads(pkgutil.get_data(__name__, "resourcepacks.json"))
 
 lookup_id_to_name = {}
 lookup_name_to_item = {}
