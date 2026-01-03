@@ -61,7 +61,9 @@ def diff4solver(difficulty):
         return ("mania", "mania")
 
 # allow multiple local repo
-appDir = str(Path(__file__).parents[4])
+# for apworld, appDir should be empty since getPresetDir returns paths starting with 'worlds/sm/...'
+_isAPWorld = ".apworld" in __file__
+appDir = "" if _isAPWorld else str(Path(__file__).parents[4])
 
 def isKnows(knows):
     return knows[0:len('__')] != '__' and knows[0] == knows[0].upper()
