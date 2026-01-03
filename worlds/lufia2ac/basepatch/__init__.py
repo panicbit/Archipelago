@@ -1,4 +1,5 @@
 import os
+import pkgutil
 
 import bsdiff4
 
@@ -6,8 +7,7 @@ from ..Rom import get_base_rom_bytes
 
 
 def apply_basepatch(base_rom_bytes: bytes) -> bytes:
-    with open(os.path.join(os.path.dirname(__file__), "basepatch.bsdiff4"), "rb") as basepatch:
-        delta: bytes = basepatch.read()
+    delta: bytes = pkgutil.get_data(__name__, "basepatch.bsdiff4")
     return bsdiff4.patch(base_rom_bytes, delta)
 
 
