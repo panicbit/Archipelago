@@ -13,6 +13,7 @@ import itertools
 import logging
 import math
 import operator
+import os
 import pickle
 import random
 import shlex
@@ -2213,6 +2214,18 @@ class ServerCommandProcessor(CommonCommandProcessor):
 
     def default(self, raw: str):
         self.ctx.broadcast_text_all('[Server]: ' + raw, {"type": "ServerChat", "message": raw})
+
+
+    def _cmd_yappistart(self) -> bool:
+        import yappi
+        yappi.start()
+        return True
+
+    def _cmd_yappistop(self) -> bool:
+        import yappi
+        yappi.stop()
+        yappi.get_func_stats().save(f'/tmp/profile_{os.getpid()}.prof', 'callgrind')
+        return True
 
     def _cmd_save(self) -> bool:
         """Save current state to multidata"""
