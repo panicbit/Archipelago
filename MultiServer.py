@@ -253,6 +253,8 @@ class Context:
         self.logger = logger
         super(Context, self).__init__()
         self.slot_info = {}
+        self._slot_info_dict: typing.Optional[typing.Dict[int, dict]] = None
+        self._players_package_cache: typing.Optional[typing.List[dict]] = None
         self.log_network = log_network
         self.endpoints: typing.Set[Client] = set()
         self.clients = {}
@@ -684,6 +686,7 @@ class Context:
         self.hints.update(savedata["hints"])
 
         self.name_aliases.update(savedata["name_aliases"])
+        self.invalidate_players_package_cache()  # name_aliases affects players package
         self.client_game_state.update(savedata["client_game_state"])
         self.client_connection_timers.update(
             {tuple(key): datetime.datetime.fromtimestamp(value, datetime.timezone.utc) for key, value
@@ -761,8 +764,30 @@ class Context:
                            f"Location or player may not exist.")
         return -1
 
-    def get_players_package(self):
-        return [NetworkPlayer(t, p, self.get_aliased_name(t, p), n) for (t, p), n in self.player_names.items()]
+    def get_players_package(self) -> typing.List[dict]:
+        if self._players_package_cache is None:
+            self._players_package_cache = [
+                {"team": t, "slot": p, "alias": self.get_aliased_name(t, p), "name": n, "class": "NetworkPlayer"}
+                for (t, p), n in self.player_names.items()
+            ]
+        return self._players_package_cache
+
+    def invalidate_players_package_cache(self):
+        self._players_package_cache = None
+
+    def get_slot_info_dict(self) -> typing.Dict[int, dict]:
+        if self._slot_info_dict is None:
+            self._slot_info_dict = {
+                slot: {
+                    "name": info.name,
+                    "game": info.game,
+                    "type": int(info.type),  # SlotType enum to int
+                    "group_members": list(info.group_members),
+                    "class": "NetworkSlot"
+                }
+                for slot, info in self.slot_info.items()
+            }
+        return self._slot_info_dict
 
     def slot_set(self, slot) -> typing.Set[int]:
         """Returns the slot IDs that concern that slot,
@@ -1636,12 +1661,14 @@ class ClientMessageProcessor(CommonCommandProcessor):
         if alias_name:
             alias_name = alias_name[:16].strip()
             self.ctx.name_aliases[self.client.team, self.client.slot] = alias_name
+            self.ctx.invalidate_players_package_cache()
             self.output(f"Hello, {alias_name}")
             update_aliases(self.ctx, self.client.team)
             self.ctx.save()
             return True
         elif (self.client.team, self.client.slot) in self.ctx.name_aliases:
             del (self.ctx.name_aliases[self.client.team, self.client.slot])
+            self.ctx.invalidate_players_package_cache()
             self.output("Removed Alias")
             update_aliases(self.ctx, self.client.team)
             self.ctx.save()
@@ -1909,7 +1936,7 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
                 "players": ctx.get_players_package(),
                 "missing_locations": get_missing_checks(ctx, team, slot),
                 "checked_locations": get_checked_checks(ctx, team, slot),
-                "slot_info": ctx.slot_info,
+                "slot_info": ctx.get_slot_info_dict(),
                 "hint_points": get_slot_points(ctx, team, slot),
             }
             reply = [connected_packet]
@@ -2272,12 +2299,14 @@ class ServerCommandProcessor(CommonCommandProcessor):
                     if alias_name:
                         alias_name = alias_name.strip()[:15]
                         self.ctx.name_aliases[team, slot] = alias_name
+                        self.ctx.invalidate_players_package_cache()
                         self.output(f"Named {player_name} as {alias_name}")
                         update_aliases(self.ctx, team)
                         self.ctx.save()
                         return True
                     else:
                         del (self.ctx.name_aliases[team, slot])
+                        self.ctx.invalidate_players_package_cache()
                         self.output(f"Removed Alias for {player_name}")
                         update_aliases(self.ctx, team)
                         self.ctx.save()
