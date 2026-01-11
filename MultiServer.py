@@ -303,6 +303,7 @@ class Context:
         self.tags = ['AP']
         self._broadcast_buffer: typing.List[typing.Tuple[typing.List[Client], typing.List[dict]]] = []
         self._broadcast_flush_task: typing.Optional[asyncio.Task] = None
+        self.broadcast_flush_delay: float = 0.05
         self.games: typing.Dict[int, str] = {}
         self.minimum_client_versions: typing.Dict[int, Version] = {}
         self.seed_name = ""
@@ -432,7 +433,7 @@ class Context:
             self._broadcast_flush_task = asyncio.create_task(self._flush_broadcasts())
 
     async def _flush_broadcasts(self):
-        await asyncio.sleep(0.05)
+        await asyncio.sleep(self.broadcast_flush_delay)
         buffer = self._broadcast_buffer
         self._broadcast_buffer = []
 
