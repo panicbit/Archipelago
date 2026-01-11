@@ -220,7 +220,8 @@ class Context:
                       "collect_mode": str,
                       "countdown_mode": str,
                       "item_cheat": bool,
-                      "compatibility": int}
+                      "compatibility": int,
+                      "broadcast_max_batch_size": int}
     # team -> slot id -> list of clients authenticated to slot.
     clients: typing.Dict[int, typing.Dict[int, typing.List[Client]]]
     endpoints: list[Client]
@@ -304,6 +305,7 @@ class Context:
         self._broadcast_buffer: typing.List[typing.Tuple[typing.List[Client], typing.List[dict]]] = []
         self._broadcast_flush_task: typing.Optional[asyncio.Task] = None
         self.broadcast_flush_delay: float = 0.05
+        self.broadcast_max_batch_size: int = 1000
         self.games: typing.Dict[int, str] = {}
         self.minimum_client_versions: typing.Dict[int, Version] = {}
         self.seed_name = ""
@@ -454,11 +456,14 @@ class Context:
             endpoints = endpoint_lookup[key]
             sockets = [ep.socket for ep in endpoints if ep.socket and ep.socket.open]
             if sockets:
-                data = self.dumper(messages)
-                try:
-                    websockets.broadcast(sockets, data)
-                except RuntimeError:
-                    pass
+                # Send in chunks to avoid exceeding websocket payload limit (16MB)
+                for i in range(0, len(messages), self.broadcast_max_batch_size):
+                    chunk = messages[i:i + self.broadcast_max_batch_size]
+                    data = self.dumper(chunk)
+                    try:
+                        websockets.broadcast(sockets, data)
+                    except RuntimeError:
+                        pass
 
     def broadcast_text_all(self, text: str, additional_arguments: dict = {}):
         self.logger.info("Notice (all): %s" % text)
