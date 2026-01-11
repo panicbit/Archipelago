@@ -1127,10 +1127,10 @@ def send_new_items(ctx: Context, affected_slots: typing.Set[int]):
                 items = get_received_items(ctx, team, slot, client.remote_items)
                 if len(start_inventory) + len(items) > client.send_index:
                     first_new_item = max(0, client.send_index - len(start_inventory))
-                    async_start(ctx.send_msgs(client, [{
+                    ctx.broadcast([client], [{
                         "cmd": "ReceivedItems",
                         "index": client.send_index,
-                        "items": start_inventory[client.send_index:] + items[first_new_item:]}]))
+                        "items": start_inventory[client.send_index:] + items[first_new_item:]}])
                     client.send_index = len(start_inventory) + len(items)
 
 
