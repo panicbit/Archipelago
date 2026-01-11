@@ -376,7 +376,7 @@ class Context:
         try:
             await endpoint.socket.send(msg)
         except websockets.ConnectionClosed:
-            self.logger.exception(f"Exception during send_msgs, could not send {msg}")
+            self.logger.warning("Connection closed during send_msgs")
             await self.disconnect(endpoint)
             return False
         else:
@@ -390,7 +390,7 @@ class Context:
         try:
             await endpoint.socket.send(msg)
         except websockets.ConnectionClosed:
-            self.logger.exception("Exception during send_encoded_msgs")
+            self.logger.warning("Connection closed during send_encoded_msgs")
             await self.disconnect(endpoint)
             return False
         else:
