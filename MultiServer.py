@@ -254,7 +254,7 @@ class Context:
         super(Context, self).__init__()
         self.slot_info = {}
         self.log_network = log_network
-        self.endpoints = []
+        self.endpoints: typing.Set[Client] = set()
         self.clients = {}
         self.compatibility: int = compatibility
         self.shutdown_task = None
@@ -416,11 +416,11 @@ class Context:
     def broadcast_all(self, msgs: typing.List[dict]):
         msg_is_text = all(msg["cmd"] == "PrintJSON" for msg in msgs)
         data = self.dumper(msgs)
-        endpoints = (
+        endpoints = [
             endpoint
             for endpoint in self.endpoints
             if endpoint.auth and not (msg_is_text and endpoint.no_text)
-        )
+        ]
         async_start(self.broadcast_send_encoded_msgs(endpoints, data))
 
     def broadcast_text_all(self, text: str, additional_arguments: dict = {}):
@@ -430,11 +430,11 @@ class Context:
     def broadcast_team(self, team: int, msgs: typing.List[dict]):
         msg_is_text = all(msg["cmd"] == "PrintJSON" for msg in msgs)
         data = self.dumper(msgs)
-        endpoints = (
+        endpoints = [
             endpoint
             for endpoint in itertools.chain.from_iterable(self.clients[team].values())
             if not (msg_is_text and endpoint.no_text)
-        )
+        ]
         async_start(self.broadcast_send_encoded_msgs(endpoints, data))
 
     def broadcast(self, endpoints: typing.Iterable[Client], msgs: typing.List[dict]):
@@ -442,10 +442,9 @@ class Context:
         async_start(self.broadcast_send_encoded_msgs(endpoints, msgs))
 
     async def disconnect(self, endpoint: Client):
-        if endpoint in self.endpoints:
-            self.endpoints.remove(endpoint)
-        if endpoint.slot and endpoint in self.clients[endpoint.team][endpoint.slot]:
-            self.clients[endpoint.team][endpoint.slot].remove(endpoint)
+        self.endpoints.discard(endpoint)
+        if endpoint.slot:
+            self.clients[endpoint.team][endpoint.slot].discard(endpoint)
         await on_client_disconnected(self, endpoint)
 
     def notify_client(self, client: Client, text: str, additional_arguments: dict = {}):
@@ -517,7 +516,7 @@ class Context:
 
         team_0 = self.clients[0]
         for slot_id, slot_info in self.slot_info.items():
-            team_0[slot_id] = []
+            team_0[slot_id] = set()
             self.player_names[0, slot_id] = slot_info.name
             self.player_name_lookup[slot_info.name] = 0, slot_id
             self.read_data[f"hints_{0}_{slot_id}"] = lambda local_team=0, local_player=slot_id: \
@@ -889,7 +888,7 @@ def update_aliases(ctx: Context, team: int):
 
 async def server(websocket: "ServerConnection", path: str = "/", ctx: Context = None) -> None:
     client = Client(websocket, ctx)
-    ctx.endpoints.append(client)
+    ctx.endpoints.add(client)
 
     try:
         if ctx.log_network:
@@ -1891,14 +1890,14 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
         else:
             team, slot = ctx.connect_names[args['name']]
             if client.auth and client.team is not None and client.slot in ctx.clients[client.team]:
-                ctx.clients[team][slot].remove(client)  # re-auth, remove old entry
+                ctx.clients[client.team][client.slot].discard(client)  # re-auth, remove old entry
                 if client.team != team or client.slot != slot:
                     client.auth = False  # swapping Team/Slot
             client.team = team
             client.slot = slot
 
             ctx.client_ids[client.team, client.slot] = args["uuid"]
-            ctx.clients[team][slot].append(client)
+            ctx.clients[team][slot].add(client)
             client.version = args['version']
             client.tags = args['tags']
             client.no_locations = bool(client.tags & _non_game_messages.keys())
