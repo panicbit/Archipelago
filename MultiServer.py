@@ -1116,10 +1116,10 @@ def get_start_inventory(ctx: Context, player: int, remote_start_inventory: bool)
     return ctx.start_inventory.setdefault(player, []) if remote_start_inventory else []
 
 
-def send_new_items(ctx: Context):
+def send_new_items(ctx: Context, affected_slots: typing.Set[int]):
     for team, clients in ctx.clients.items():
-        for slot, clients in clients.items():
-            for client in clients:
+        for slot in affected_slots:
+            for client in clients.get(slot, []):
                 if client.no_items:
                     continue
                 start_inventory = get_start_inventory(ctx, slot, client.remote_start_inventory)
@@ -1172,12 +1172,14 @@ def get_remaining(ctx: Context, team: int, slot: int) -> typing.List[typing.Tupl
     return ctx.locations.get_remaining(ctx.location_checks, team, slot)
 
 
-def send_items_to(ctx: Context, team: int, target_slot: int, *items: NetworkItem):
-    for target in ctx.slot_set(target_slot):
+def send_items_to(ctx: Context, team: int, target_slot: int, *items: NetworkItem) -> typing.Set[int]:
+    affected = ctx.slot_set(target_slot)
+    for target in affected:
         for item in items:
             if item.player != target_slot:
                 get_received_items(ctx, team, target, False).append(item)
             get_received_items(ctx, team, target, True).append(item)
+    return affected
 
 
 def register_location_checks(ctx: Context, team: int, slot: int, locations: typing.Iterable[int],
@@ -1198,9 +1200,10 @@ def register_location_checks(ctx: Context, team: int, slot: int, locations: typi
 
         info_texts: list[dict[str, typing.Any]] = []
         log_lines: list[str] = []
+        affected_slots: typing.Set[int] = set()
         for target_player, item_id, location, flags in sorted(sortable):
             new_item = NetworkItem(item_id, location, slot, flags)
-            send_items_to(ctx, team, target_player, new_item)
+            affected_slots |= send_items_to(ctx, team, target_player, new_item)
 
             log_lines.append('(Team #%d) %s sent %s to %s (%s)' % (
                 team + 1, ctx.player_names[(team, slot)], ctx.item_names[ctx.slot_info[target_player].game][item_id],
@@ -1219,7 +1222,7 @@ def register_location_checks(ctx: Context, team: int, slot: int, locations: typi
         del sortable
 
         ctx.location_checks[team, slot] |= new_locations
-        send_new_items(ctx)
+        send_new_items(ctx, affected_slots)
         ctx.broadcast(ctx.clients[team][slot], [{
             "cmd": "RoomUpdate",
             "hint_points": get_slot_points(ctx, team, slot),
@@ -1724,7 +1727,7 @@ class ClientMessageProcessor(CommonCommandProcessor):
                     'Cheat console: sending "' + item_name + '" to ' + self.ctx.get_aliased_name(self.client.team,
                                                                                                  self.client.slot),
                     {"type": "ItemCheat", "team": self.client.team, "receiving": self.client.slot, "item": new_item})
-                send_new_items(self.ctx)
+                send_new_items(self.ctx, {self.client.slot})
                 return True
             else:
                 self.output(response)
@@ -2442,9 +2445,9 @@ class ServerCommandProcessor(CommonCommandProcessor):
                 if amount > 100:
                     raise ValueError(f"{amount} is invalid. Maximum is 100.")
                 new_items = [NetworkItem(names[item_name], -1, 0) for _ in range(int(amount))]
-                send_items_to(self.ctx, team, slot, *new_items)
+                affected_slots = send_items_to(self.ctx, team, slot, *new_items)
 
-                send_new_items(self.ctx)
+                send_new_items(self.ctx, affected_slots)
                 self.ctx.broadcast_text_all(
                     'Cheat console: sending ' + ('' if amount == 1 else f'{amount} of ') +
                     f'"{item_name}" to {self.ctx.get_aliased_name(team, slot)}')
