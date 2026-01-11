@@ -301,6 +301,8 @@ class Context:
         self.auto_saver_thread: typing.Optional[threading.Thread] = None
         self.save_dirty = False
         self.tags = ['AP']
+        self._broadcast_buffer: typing.List[typing.Tuple[typing.List[Client], typing.List[dict]]] = []
+        self._broadcast_flush_task: typing.Optional[asyncio.Task] = None
         self.games: typing.Dict[int, str] = {}
         self.minimum_client_versions: typing.Dict[int, Version] = {}
         self.seed_name = ""
@@ -417,13 +419,45 @@ class Context:
 
     def broadcast_all(self, msgs: typing.List[dict]):
         msg_is_text = all(msg["cmd"] == "PrintJSON" for msg in msgs)
-        data = self.dumper(msgs)
         endpoints = [
             endpoint
             for endpoint in self.endpoints
             if endpoint.auth and not (msg_is_text and endpoint.no_text)
         ]
-        async_start(self.broadcast_send_encoded_msgs(endpoints, data))
+        self._queue_broadcast(endpoints, msgs)
+
+    def _queue_broadcast(self, endpoints: typing.List[Client], msgs: typing.List[dict]):
+        self._broadcast_buffer.append((endpoints, msgs))
+        if self._broadcast_flush_task is None or self._broadcast_flush_task.done():
+            self._broadcast_flush_task = asyncio.create_task(self._flush_broadcasts())
+
+    async def _flush_broadcasts(self):
+        await asyncio.sleep(0.05)
+        buffer = self._broadcast_buffer
+        self._broadcast_buffer = []
+
+        if not buffer:
+            return
+
+        grouped: typing.Dict[frozenset, typing.List[dict]] = {}
+        endpoint_lookup: typing.Dict[frozenset, typing.List[Client]] = {}
+
+        for endpoints, msgs in buffer:
+            key = frozenset(id(ep) for ep in endpoints)
+            if key not in grouped:
+                grouped[key] = []
+                endpoint_lookup[key] = endpoints
+            grouped[key].extend(msgs)
+
+        for key, messages in grouped.items():
+            endpoints = endpoint_lookup[key]
+            sockets = [ep.socket for ep in endpoints if ep.socket and ep.socket.open]
+            if sockets:
+                data = self.dumper(messages)
+                try:
+                    websockets.broadcast(sockets, data)
+                except RuntimeError:
+                    pass
 
     def broadcast_text_all(self, text: str, additional_arguments: dict = {}):
         self.logger.info("Notice (all): %s" % text)
@@ -431,17 +465,15 @@ class Context:
 
     def broadcast_team(self, team: int, msgs: typing.List[dict]):
         msg_is_text = all(msg["cmd"] == "PrintJSON" for msg in msgs)
-        data = self.dumper(msgs)
         endpoints = [
             endpoint
             for endpoint in itertools.chain.from_iterable(self.clients[team].values())
             if not (msg_is_text and endpoint.no_text)
         ]
-        async_start(self.broadcast_send_encoded_msgs(endpoints, data))
+        self._queue_broadcast(endpoints, msgs)
 
     def broadcast(self, endpoints: typing.Iterable[Client], msgs: typing.List[dict]):
-        msgs = self.dumper(msgs)
-        async_start(self.broadcast_send_encoded_msgs(endpoints, msgs))
+        self._queue_broadcast(list(endpoints), msgs)
 
     async def disconnect(self, endpoint: Client):
         self.endpoints.discard(endpoint)
