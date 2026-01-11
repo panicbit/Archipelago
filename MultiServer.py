@@ -1333,20 +1333,28 @@ def format_hint(ctx: Context, team: int, hint: Hint) -> str:
 
 
 def json_format_send_event(net_item: NetworkItem, receiving_player: int):
-    parts = []
-    NetUtils.add_json_text(parts, net_item.player, type=NetUtils.JSONTypes.player_id)
-    if net_item.player == receiving_player:
-        NetUtils.add_json_text(parts, " found their ")
-        NetUtils.add_json_item(parts, net_item.item, net_item.player, net_item.flags)
+    # Inlined Netutiles calls for performance
+    player = net_item.player
+    if player == receiving_player:
+        parts = [
+            {"text": str(player), "type": "player_id"},
+            {"text": " found their "},
+            {"text": str(net_item.item), "player": player, "flags": net_item.flags, "type": "item_id"},
+            {"text": " ("},
+            {"text": str(net_item.location), "player": player, "type": "location_id"},
+            {"text": ")"},
+        ]
     else:
-        NetUtils.add_json_text(parts, " sent ")
-        NetUtils.add_json_item(parts, net_item.item, receiving_player, net_item.flags)
-        NetUtils.add_json_text(parts, " to ")
-        NetUtils.add_json_text(parts, receiving_player, type=NetUtils.JSONTypes.player_id)
-
-    NetUtils.add_json_text(parts, " (")
-    NetUtils.add_json_location(parts, net_item.location, net_item.player)
-    NetUtils.add_json_text(parts, ")")
+        parts = [
+            {"text": str(player), "type": "player_id"},
+            {"text": " sent "},
+            {"text": str(net_item.item), "player": receiving_player, "flags": net_item.flags, "type": "item_id"},
+            {"text": " to "},
+            {"text": str(receiving_player), "type": "player_id"},
+            {"text": " ("},
+            {"text": str(net_item.location), "player": player, "type": "location_id"},
+            {"text": ")"},
+        ]
 
     return {"cmd": "PrintJSON", "data": parts, "type": "ItemSend",
             "receiving": receiving_player,
