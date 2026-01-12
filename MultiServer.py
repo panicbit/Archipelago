@@ -55,10 +55,79 @@ no_version = Version(0, 0, 0)
 assert isinstance(no_version, tuple)  # assert immutable
 
 server_per_message_deflate_factory = ServerPerMessageDeflateFactory(
+    server_no_context_takeover=True,  # Makes compression stateless, enabling broadcast caching
     server_max_window_bits=11,
     client_max_window_bits=11,
     compress_settings={"memLevel": 4},
 )
+
+
+# Fast broadcast with cached frame serialization
+# Since server_no_context_takeover=True, compression is stateless and we can cache
+# the fully serialized frame bytes instead of compressing per-socket.
+import struct
+from functools import lru_cache
+from websockets.frames import Opcode
+from websockets.legacy.protocol import State
+
+_EMPTY_UNCOMPRESSED_BLOCK = b"\x00\x00\xff\xff"
+
+
+@lru_cache(maxsize=256)
+def _serialize_frame_cached(data: bytes, wbits: int, level: int, mem_level: int) -> bytes:
+    """Compress and serialize a complete websocket frame, cached."""
+    encoder = zlib.compressobj(wbits=wbits, level=level, memLevel=mem_level)
+    compressed = encoder.compress(data) + encoder.flush(zlib.Z_SYNC_FLUSH)
+    if compressed.endswith(_EMPTY_UNCOMPRESSED_BLOCK):
+        compressed = compressed[:-4]
+
+    # Build frame header (fin=True, rsv1=True for compression, opcode=TEXT, no mask)
+    head1 = 0b10000000 | 0b01000000 | Opcode.TEXT  # fin + rsv1 + TEXT
+    head2 = 0  # no mask (server side)
+
+    length = len(compressed)
+    if length < 126:
+        header = struct.pack("!BB", head1, head2 | length)
+    elif length < 65536:
+        header = struct.pack("!BBH", head1, head2 | 126, length)
+    else:
+        header = struct.pack("!BBQ", head1, head2 | 127, length)
+
+    return header + compressed
+
+
+def fast_broadcast(sockets, message: str) -> None:
+    if not sockets:
+        return
+
+    if not isinstance(message, str):
+        websockets.broadcast(sockets, message)
+        return
+
+    deflate_sockets = []
+    no_deflate_sockets = []
+
+    for ws in sockets:
+        if ws.state is not State.OPEN:
+            continue
+        has_deflate = any(isinstance(ext, PerMessageDeflate) for ext in ws.extensions)
+        if has_deflate:
+            deflate_sockets.append(ws)
+        else:
+            no_deflate_sockets.append(ws)
+
+    if deflate_sockets:
+        data = message.encode('utf-8')
+        frame_bytes = _serialize_frame_cached(data, -11, 6, 4)
+
+        for ws in deflate_sockets:
+            try:
+                ws.transport.write(frame_bytes)
+            except Exception:
+                pass
+
+    if no_deflate_sockets:
+        websockets.broadcast(no_deflate_sockets, message)
 
 
 def remove_from_list(container, value):
@@ -411,7 +480,7 @@ class Context:
             if endpoint.socket and endpoint.socket.open:
                 sockets.append(endpoint.socket)
         try:
-            websockets.broadcast(sockets, msg)
+            fast_broadcast(sockets, msg)
         except RuntimeError:
             self.logger.exception("Exception during broadcast_send_encoded_msgs")
             return False
@@ -461,7 +530,7 @@ class Context:
                     chunk = messages[i:i + self.broadcast_max_batch_size]
                     data = self.dumper(chunk)
                     try:
-                        websockets.broadcast(sockets, data)
+                        fast_broadcast(sockets, data)
                     except RuntimeError:
                         pass
 
