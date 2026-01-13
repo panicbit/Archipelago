@@ -499,7 +499,7 @@ class Context:
         self._queue_broadcast(endpoints, msgs)
 
     def _queue_broadcast(self, endpoints: typing.List[Client], msgs: typing.List[dict]):
-        self._broadcast_buffer.append((endpoints, msgs))
+        self._broadcast_buffer.append((endpoints, list(msgs)))
         if self._broadcast_flush_task is None or self._broadcast_flush_task.done():
             self._broadcast_flush_task = asyncio.create_task(self._flush_broadcasts())
 
