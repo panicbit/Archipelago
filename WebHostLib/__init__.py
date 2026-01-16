@@ -57,6 +57,7 @@ app.config["MAX_ROLL"] = 20
 app.config["CACHE_TYPE"] = "SimpleCache"
 app.config["HOST_ADDRESS"] = ""
 app.config["ASSET_RIGHTS"] = False
+app.config["ROOM_TIMEOUT"] = 2 * 60 * 60  # seconds of inactivity before room shuts down
 
 cache = Cache()
 Compress(app)

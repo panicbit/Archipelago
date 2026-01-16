@@ -1,4 +1,4 @@
-from flask import session, jsonify
+from flask import current_app, session, jsonify
 from pony.orm import select
 
 from WebHostLib import to_url
@@ -16,7 +16,7 @@ def get_rooms():
             "creation_time": room.creation_time,
             "last_activity": room.last_activity,
             "last_port": room.last_port,
-            "timeout": room.timeout,
+            "timeout": current_app.config["ROOM_TIMEOUT"],
             "tracker": to_url(room.tracker),
         })
     return jsonify(response)

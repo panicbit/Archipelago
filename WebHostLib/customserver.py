@@ -24,6 +24,7 @@ from MultiServer import (
     server_per_message_deflate_factory,
 )
 from Utils import restricted_loads, cache_argsless
+from . import app
 from .locker import Locker
 from .models import Command, GameDataPackage, Room, db
 
@@ -315,8 +316,7 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                     del room
                 else:
                     ctx.logger.exception("Could not determine port. Likely hosting failure.")
-                with db_session:
-                    ctx.auto_shutdown = Room.get(id=room_id).timeout
+                ctx.auto_shutdown = app.config["ROOM_TIMEOUT"]
                 if ctx.saving:
                     setattr(asyncio.current_task(), "save", lambda: ctx._save(True))
                 assert ctx.shutdown_task is None
@@ -347,7 +347,7 @@ def run_server_process(name: str, ponyconfig: dict, static_server_data: dict,
                         # ensure the Room does not spin up again on its own, minute of safety buffer
                         room = Room.get(id=room_id)
                         room.last_activity = datetime.datetime.utcnow() - \
-                                             datetime.timedelta(minutes=1, seconds=room.timeout)
+                                             datetime.timedelta(minutes=1, seconds=app.config["ROOM_TIMEOUT"])
                     del room
                     logging.info(f"Shutting down room {room_id} on {name}.")
                 finally:

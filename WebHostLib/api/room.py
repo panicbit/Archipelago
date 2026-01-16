@@ -1,7 +1,7 @@
 from typing import Any, Dict
 from uuid import UUID
 
-from flask import abort, url_for
+from flask import abort, current_app, url_for
 
 from WebHostLib import to_url
 import worlds.Files
@@ -38,6 +38,6 @@ def room_info(room_id: UUID) -> Dict[str, Any]:
         "players": get_players(room.seed),
         "last_port": room.last_port,
         "last_activity": room.last_activity,
-        "timeout": room.timeout,
+        "timeout": current_app.config["ROOM_TIMEOUT"],
         "downloads": downloads,
     }
