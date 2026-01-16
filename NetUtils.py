@@ -128,18 +128,25 @@ def convert_to_base_types(obj: typing.Any) -> _base_types:
         raise Exception(f"Cannot handle {type(obj)}")
 
 
+def _convert_for_json(obj):
+    """Recursively convert objects for JSON serialization, handling NamedTuples."""
+    if isinstance(obj, tuple) and hasattr(obj, "_fields"):  # NamedTuple
+        data = {k: _convert_for_json(v) for k, v in obj._asdict().items()}
+        data["class"] = obj.__class__.__name__
+        return data
+    if isinstance(obj, dict):
+        return {_convert_for_json(k): _convert_for_json(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple, set, frozenset)):
+        return [_convert_for_json(item) for item in obj]
+    return obj
+
+
 class _FallbackEncoder(JSONEncoder):
     def __init__(self):
         super().__init__(ensure_ascii=False, check_circular=False, separators=(',', ':'))
 
-    def default(self, obj):
-        if isinstance(obj, tuple) and hasattr(obj, "_fields"):  # NamedTuple
-            data = obj._asdict()
-            data["class"] = obj.__class__.__name__
-            return data
-        if isinstance(obj, (tuple, set, frozenset)):
-            return tuple(obj)
-        return super().default(obj)
+    def encode(self, obj):
+        return super().encode(_convert_for_json(obj))
 
 
 _encode = _FallbackEncoder().encode
