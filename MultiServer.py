@@ -290,7 +290,8 @@ class Context:
                       "countdown_mode": str,
                       "item_cheat": bool,
                       "compatibility": int,
-                      "broadcast_max_batch_size": int}
+                      "broadcast_max_batch_size": int,
+                      "broadcast_flush_delay": float}
     # team -> slot id -> list of clients authenticated to slot.
     clients: typing.Dict[int, typing.Dict[int, typing.List[Client]]]
     endpoints: list[Client]
