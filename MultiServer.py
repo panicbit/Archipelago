@@ -2369,6 +2369,35 @@ class ServerCommandProcessor(CommonCommandProcessor):
         yappi.get_func_stats().save(f'/tmp/profile_{os.getpid()}.prof', 'callgrind')
         return True
 
+    def _cmd_memdump(self) -> bool:
+        import gc
+        gc.collect()
+        type_counts: typing.Counter[type] = collections.Counter()
+        type_sizes: typing.Counter[type] = collections.Counter()
+        for obj in gc.get_objects():
+            obj_type = type(obj)
+            type_counts[obj_type] += 1
+            try:
+                type_sizes[obj_type] += sys.getsizeof(obj)
+            except (TypeError, RecursionError):
+                pass
+
+        filename = f'/tmp/memdump_{os.getpid()}.txt'
+        with open(filename, 'w') as f:
+            f.write("Memory dump by object type (sorted by size):\n")
+            f.write("=" * 80 + "\n")
+            f.write(f"{'Type':<50} {'Count':>12} {'Size (MB)':>12}\n")
+            f.write("-" * 80 + "\n")
+            for obj_type, size in type_sizes.most_common(50):
+                count = type_counts[obj_type]
+                f.write(f"{str(obj_type):<50} {count:>12,} {size / 1024 / 1024:>12.2f}\n")
+            f.write("-" * 80 + "\n")
+            total_size = sum(type_sizes.values())
+            total_count = sum(type_counts.values())
+            f.write(f"{'TOTAL':<50} {total_count:>12,} {total_size / 1024 / 1024:>12.2f}\n")
+        self.output(f"Memory dump written to {filename}")
+        return True
+
     def _cmd_save(self) -> bool:
         """Save current state to multidata"""
         if self.ctx.saving:
