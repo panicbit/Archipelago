@@ -4,6 +4,7 @@ from collections.abc import Mapping, Sequence
 import typing
 import enum
 import warnings
+import logging
 from json import JSONEncoder, JSONDecoder
 import orjson
 
@@ -127,15 +128,34 @@ def convert_to_base_types(obj: typing.Any) -> _base_types:
         raise Exception(f"Cannot handle {type(obj)}")
 
 
-_encode = JSONEncoder(
-    ensure_ascii=False,
-    check_circular=False,
-    separators=(',', ':'),
-).encode
+class _FallbackEncoder(JSONEncoder):
+    def __init__(self):
+        super().__init__(ensure_ascii=False, check_circular=False, separators=(',', ':'))
+
+    def default(self, obj):
+        if isinstance(obj, tuple) and hasattr(obj, "_fields"):  # NamedTuple
+            data = obj._asdict()
+            data["class"] = obj.__class__.__name__
+            return data
+        if isinstance(obj, (tuple, set, frozenset)):
+            return tuple(obj)
+        return super().default(obj)
+
+
+_encode = _FallbackEncoder().encode
+_fallback_count = 0
 
 
 def encode(obj: typing.Any) -> str:
-    return orjson.dumps(obj, default=_typed_tuple, option=orjson.OPT_NON_STR_KEYS).decode('utf-8')
+    global _fallback_count
+    try:
+        return orjson.dumps(obj, default=_typed_tuple, option=orjson.OPT_NON_STR_KEYS).decode('utf-8')
+    except TypeError:
+        # Fall back to stdlib json for cases orjson can't handle (e.g., arbitrary-precision integers)
+        if _fallback_count % 1000 == 0:
+            logging.warning(f"Using slow json fallback encoder: {obj!r}")
+        _fallback_count += 1
+        return _encode(obj)
 
 
 def get_any_version(data: dict) -> Version:
