@@ -291,7 +291,8 @@ class Context:
                       "item_cheat": bool,
                       "compatibility": int,
                       "broadcast_max_batch_size": int,
-                      "broadcast_flush_delay": float}
+                      "broadcast_flush_delay": float,
+                      "broadcast_to_involved_only": bool}
     # team -> slot id -> list of clients authenticated to slot.
     clients: typing.Dict[int, typing.Dict[int, typing.List[Client]]]
     endpoints: list[Client]
@@ -376,6 +377,7 @@ class Context:
         self._broadcast_flush_task: typing.Optional[asyncio.Task] = None
         self.broadcast_flush_delay: float = 0.05
         self.broadcast_max_batch_size: int = 1000
+        self.broadcast_to_involved_only: bool = False
         self.games: typing.Dict[int, str] = {}
         self.minimum_client_versions: typing.Dict[int, Version] = {}
         self.seed_name = ""
@@ -1094,11 +1096,17 @@ async def on_client_joined(ctx: Context, client: Client):
     else:
         final_verb = "playing"
 
-    ctx.broadcast_text_all(
-        f"{ctx.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1}) "
-        f"{final_verb} {ctx.games[client.slot]} has joined. "
-        f"Client({version_str}), {client.tags}.",
-        {"type": "Join", "team": client.team, "slot": client.slot, "tags": client.tags})
+    join_msg = [{
+        "cmd": "PrintJSON",
+        "data": [{"text": f"{ctx.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1}) "
+                          f"{final_verb} {ctx.games[client.slot]} has joined. "
+                          f"Client({version_str}), {client.tags}."}],
+        "type": "Join", "team": client.team, "slot": client.slot, "tags": client.tags
+    }]
+    if ctx.broadcast_to_involved_only:
+        ctx.broadcast(ctx.clients[client.team].get(client.slot, []), join_msg)
+    else:
+        ctx.broadcast_team(client.team, join_msg)
     ctx.notify_client(client, "Now that you are connected, "
                               "you can use !help to list commands to run via the server. "
                               "If your client supports it, "
@@ -1125,10 +1133,16 @@ async def on_client_left(ctx: Context, client: Client):
     else:
         final_verb = "left"
 
-    ctx.broadcast_text_all(
-        f"{ctx.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1}) has {final_verb} the game. "
-        f"Client({version_str}), {client.tags}.",
-        {"type": "Part", "team": client.team, "slot": client.slot})
+    part_msg = [{
+        "cmd": "PrintJSON",
+        "data": [{"text": f"{ctx.get_aliased_name(client.team, client.slot)} (Team #{client.team + 1}) has {final_verb} the game. "
+                          f"Client({version_str}), {client.tags}."}],
+        "type": "Part", "team": client.team, "slot": client.slot
+    }]
+    if ctx.broadcast_to_involved_only:
+        ctx.broadcast(ctx.clients[client.team].get(client.slot, []), part_msg)
+    else:
+        ctx.broadcast_team(client.team, part_msg)
 
 
 async def countdown(ctx: Context, timer: int):
@@ -1286,7 +1300,17 @@ def register_location_checks(ctx: Context, team: int, slot: int, locations: typi
                 ctx.player_names[(team, target_player)], ctx.location_names[ctx.slot_info[slot].game][location]))
             info_texts.append(json_format_send_event(new_item, target_player))
 
-        ctx.broadcast_team(team, info_texts)
+        if ctx.broadcast_to_involved_only:
+            # Only send to sender and receivers
+            involved_slots = {slot}
+            for info in info_texts:
+                involved_slots.add(info["receiving"])
+            involved_clients = []
+            for involved_slot in involved_slots:
+                involved_clients.extend(ctx.clients[team].get(involved_slot, []))
+            ctx.broadcast(involved_clients, info_texts)
+        else:
+            ctx.broadcast_team(team, info_texts)
         if log_lines:
             ctx.logger.info('\n'.join(log_lines))
 
