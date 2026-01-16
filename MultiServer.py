@@ -2302,7 +2302,7 @@ async def process_client_cmd(ctx: Context, client: Client, args: dict):
             args["cmd"] = "Bounced"
             msg = ctx.dumper([args])
 
-            for bounceclient in ctx.endpoints:
+            for bounceclient in list(ctx.endpoints):
                 if client.team == bounceclient.team and (ctx.games[bounceclient.slot] in games or
                                                          set(bounceclient.tags) & tags or
                                                          bounceclient.slot in slots):
