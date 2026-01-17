@@ -2,13 +2,13 @@ from datetime import datetime, timezone
 from typing import Any, TypedDict
 from uuid import UUID
 
-from flask import abort
+from flask import abort, Response, current_app
 
 from NetUtils import ClientStatus, Hint, NetworkItem, SlotType
 from WebHostLib import cache
 from WebHostLib.api import api_endpoints
 from WebHostLib.models import Room
-from WebHostLib.tracker import TrackerData
+from WebHostLib.tracker import TrackerData, get_tracker_data, cache_with_herd_protection
 
 
 class PlayerAlias(TypedDict):
@@ -65,8 +65,7 @@ class PlayerGame(TypedDict):
 
 
 @api_endpoints.route("/tracker/<suuid:tracker>")
-@cache.memoize(timeout=60)
-def tracker_data(tracker: UUID) -> dict[str, Any]:
+def tracker_data_route(tracker: UUID) -> Response:
     """
     Outputs json data to <root_path>/api/tracker/<id of current session tracker>.
 
@@ -77,9 +76,16 @@ def tracker_data(tracker: UUID) -> dict[str, Any]:
     room: Room | None = Room.get(tracker=tracker)
     if not room:
         abort(404)
+    json_bytes = _get_tracker_data_response(room)
+    return current_app.response_class(json_bytes, mimetype="application/json")
 
-    tracker_data = TrackerData(room)
 
+@cache_with_herd_protection(
+    key_func=lambda room: f"api_tracker:{room.tracker}",
+    version_func=lambda room: room.last_activity,
+)
+def _get_tracker_data_response(room: Room) -> bytes:
+    tracker_data = get_tracker_data(room)
     all_players: dict[int, list[int]] = tracker_data.get_all_players()
 
     player_aliases: list[PlayerAlias] = []
@@ -155,7 +161,7 @@ def tracker_data(tracker: UUID) -> dict[str, Any]:
             player_status.append(
                 {"team": team, "player": player, "status": tracker_data.get_player_client_status(team, player)})
 
-    return {
+    result = {
         "aliases": player_aliases,
         "player_items_received": player_items_received,
         "player_checks_done": player_checks_done,
@@ -165,6 +171,7 @@ def tracker_data(tracker: UUID) -> dict[str, Any]:
         "connection_timers": connection_timers,
         "player_status": player_status,
     }
+    return current_app.json.dumps(result).encode("utf-8")
 
 
 class PlayerGroups(TypedDict):
@@ -191,7 +198,7 @@ def static_tracker_data(tracker: UUID) -> dict[str, Any]:
     room: Room | None = Room.get(tracker=tracker)
     if not room:
         abort(404)
-    tracker_data = TrackerData(room)
+    tracker_data = get_tracker_data(room)
 
     all_players: dict[int, list[int]] = tracker_data.get_all_players()
 
@@ -244,7 +251,7 @@ def tracker_slot_data(tracker: UUID) -> list[PlayerSlotData]:
     room: Room | None = Room.get(tracker=tracker)
     if not room:
         abort(404)
-    tracker_data = TrackerData(room)
+    tracker_data = get_tracker_data(room)
 
     all_players: dict[int, list[int]] = tracker_data.get_all_players()
 

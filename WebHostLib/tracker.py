@@ -1,5 +1,6 @@
 import datetime
 import collections
+import threading
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, NamedTuple, Counter
 from uuid import UUID
@@ -19,6 +20,49 @@ TRACKER_CACHE_TIMEOUT_IN_SECONDS = 60
 
 _multiworld_trackers: Dict[str, Callable] = {}
 _player_trackers: Dict[str, Callable] = {}
+
+_CACHE_MAX_SIZE = 128
+_herd_cache: Dict[str, Tuple[Any, Any]] = {}
+_herd_locks: Dict[str, threading.Lock] = {}
+_herd_locks_lock = threading.Lock()
+
+
+def cache_with_herd_protection(key_func: Callable[..., str], version_func: Callable[..., Any] = None):
+    import functools
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            key = key_func(*args, **kwargs)
+            current_version = version_func(*args, **kwargs) if version_func else None
+            with _herd_locks_lock:
+                if key not in _herd_locks:
+                    _herd_locks[key] = threading.Lock()
+                lock = _herd_locks[key]
+            with lock:
+                cached = _herd_cache.get(key)
+                if cached:
+                    result, cached_version = cached
+                    if version_func is None or cached_version == current_version:
+                        del _herd_cache[key]
+                        _herd_cache[key] = cached  # move to end (LRU)
+                        return result
+                result = func(*args, **kwargs)
+                _herd_cache[key] = (result, current_version)
+                while len(_herd_cache) > _CACHE_MAX_SIZE:
+                    oldest = next(iter(_herd_cache))
+                    del _herd_cache[oldest]
+                    _herd_locks.pop(oldest, None)
+                return result
+        return wrapper
+    return decorator
+
+
+@cache_with_herd_protection(
+    key_func=lambda room: f"tracker_data:{room.tracker}",
+    version_func=lambda room: room.last_activity,
+)
+def get_tracker_data(room: Room) -> "TrackerData":
+    return TrackerData(room)
 
 TeamPlayer = Tuple[int, int]
 ItemMetadata = Tuple[int, int, int]
@@ -338,9 +382,13 @@ def get_player_tracker(tracker: UUID, tracked_team: int, tracked_player: int, ge
     return response
 
 
+@cache_with_herd_protection(
+    key_func=lambda room, team, player, generic: f"player_tracker:{room.tracker}:{team}:{player}:{generic}",
+    version_func=lambda room, team, player, generic: room.last_activity,
+)
 def get_timeout_and_player_tracker(room: Room, tracked_team: int, tracked_player: int, generic: bool)\
         -> Tuple[int, datetime.datetime, str]:
-    tracker_data = TrackerData(room)
+    tracker_data = get_tracker_data(room)
 
     # Load and render the game-specific player tracker, or fallback to generic tracker if none exists.
     game_specific_tracker = _player_trackers.get(tracker_data.get_player_game(tracked_player), None)
@@ -361,11 +409,6 @@ def get_generic_game_tracker(tracker: UUID, tracked_team: int, tracked_player: i
 @app.route("/tracker/<suuid:tracker>", defaults={"game": "Generic"})
 @app.route("/tracker/<suuid:tracker>/<game>")
 def get_multiworld_tracker(tracker: UUID, game: str) -> Response:
-    key = f"{tracker}_{game}"
-    response: Optional[Response] = cache.get(key)
-    if response:
-        return response
-
     # Room must exist.
     room = Room.get(tracker=tracker)
 
@@ -376,13 +419,16 @@ def get_multiworld_tracker(tracker: UUID, game: str) -> Response:
     timeout, last_modified, tracker_page = get_timeout_and_multiworld_tracker(room, game)
     response = make_response(tracker_page)
     response.last_modified = last_modified
-    cache.set(key, response, timeout)
     return response
 
 
+@cache_with_herd_protection(
+    key_func=lambda room, game: f"multiworld_tracker:{room.tracker}:{game}",
+    version_func=lambda room, game: room.last_activity,
+)
 def get_timeout_and_multiworld_tracker(room: Room, game: str)\
         -> Tuple[int, datetime.datetime, str]:
-    tracker_data = TrackerData(room)
+    tracker_data = get_tracker_data(room)
     enabled_trackers = list(get_enabled_multiworld_trackers(room).keys())
     if game in _multiworld_trackers:
         tracker = _multiworld_trackers[game](tracker_data, enabled_trackers)
@@ -482,7 +528,7 @@ def get_multiworld_sphere_tracker(tracker: UUID):
     if not room:
         abort(404)
 
-    tracker_data = TrackerData(room)
+    tracker_data = get_tracker_data(room)
     return render_generic_multiworld_sphere_tracker(tracker_data)
 
 
