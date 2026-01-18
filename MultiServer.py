@@ -743,7 +743,7 @@ class Context:
                         if self.save_dirty:
                             self.logger.debug("Saving via thread.")
                             self._save()
-                    except OperationalError as e:
+                    except Exception as e:
                         self.logger.exception(e)
                         self.logger.info(f"Saving failed. Retry in {self.auto_save_interval} seconds.")
                     else:
