@@ -125,8 +125,9 @@ def autohost(config: dict):
                     hosters.append(hoster)
                     hoster.start()
 
-                while not stop_event.wait(0.1):
+                while not stop_event.wait(5):
                     with db_session:
+                        # we have to filter twice, as the per-room timeout can't currently be PonyORM transpiled.
                         rooms = select(
                             room for room in Room if
                             room.last_activity >= datetime.utcnow() - timedelta(days=3))
